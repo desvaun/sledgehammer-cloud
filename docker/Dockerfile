@@ -6,7 +6,11 @@ LABEL org.opencontainers.image.description="Containerized SledgeHammer worker en
 # Pin the exact SledgeHammer revision used for the evaluation.
 ARG SLEDGEHAMMER_COMMIT=7d3565b46b94b18cff8db021a7da360876a36156
 
-# Install base development and runtime dependencies.
+# Install base development dependencies plus the Rocky Linux runtime
+# dependencies required by Cadence Genus and Innovus.
+#
+# Cadence itself is NOT included in this image. The commercial tool
+# installation is mounted read-only from the host at runtime.
 RUN dnf update -y && \
     dnf install -y \
         git \
@@ -18,11 +22,44 @@ RUN dnf update -y && \
         dnf-plugins-core \
         rpm \
         cpio \
-        libnsl \
         libpq \
         openldap \
         cyrus-sasl-devel \
-        openssl-devel && \
+        openssl-devel \
+        ksh \
+        libpng \
+        motif \
+        mesa-libGLU \
+        libXScrnSaver \
+        gd \
+        pcre2-utf16 \
+        xcb-util-wm \
+        xcb-util-image \
+        xcb-util-keysyms \
+        xcb-util-renderutil \
+        libxkbcommon-x11 \
+        libxkbcommon \
+        nss \
+        libXcomposite \
+        libXdamage \
+        libXtst \
+        pciutils-libs \
+        alsa-lib \
+        libssh \
+        libX11-xcb \
+        libXft \
+        libnsl \
+        libglvnd-glx \
+        libSM \
+        libICE \
+        libXp \
+        libXmu \
+        libXt \
+        tcsh \
+        xterm \
+        numactl-libs \
+        file \
+        procps-ng && \
     dnf clean all
 
 WORKDIR /opt
@@ -36,6 +73,13 @@ WORKDIR /opt/sledgehammer
 
 # Standalone Step 2 environment: no external technology plugins yet.
 ENV SLEDGE_NO_PLUGINS=1
+
+# Genus expects a valid user identity and writable temporary directory.
+ENV USER=root \
+    LOGNAME=root \
+    TMPDIR=/tmp/genus-root
+
+RUN mkdir -p "${TMPDIR}" && chmod 1777 "${TMPDIR}"
 
 # Run the repository's own environment setup.
 # Answer "n" to the Postgres secrets prompt; database integration comes later.
