@@ -27,6 +27,7 @@ RUN dnf update -y && \
         cyrus-sasl-devel \
         openssl-devel \
         ksh \
+        pinentry \
         libpng \
         motif \
         mesa-libGLU \
