@@ -95,6 +95,11 @@ RUN git apply --check /tmp/sky130-core-libraries.patch && \
     git apply /tmp/sky130-core-libraries.patch && \
     rm /tmp/sky130-core-libraries.patch
 
+COPY patches/sky130/sram22-full-cache.patch /tmp/sram22-full-cache.patch
+RUN git apply --check /tmp/sram22-full-cache.patch && \
+    git apply /tmp/sram22-full-cache.patch && \
+    rm /tmp/sram22-full-cache.patch
+
 # Make the SledgeHammer virtual environment available by default.
 ENV PATH="/opt/sledgehammer/.venv/bin:/root/.local/bin:${PATH}"
 
