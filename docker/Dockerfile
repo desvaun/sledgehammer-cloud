@@ -86,6 +86,15 @@ RUN mkdir -p "${TMPDIR}" && chmod 1777 "${TMPDIR}"
 # Answer "n" to the Postgres secrets prompt; database integration comes later.
 RUN printf 'n\n' | ./scripts/uv_setup.sh
 
+# Sky130 core-level cloud flows do not use pad timing libraries.
+# The upstream plugin adds the full sky130_fd_io Liberty collection, several
+# files from which are not accepted by Genus 25.1. Apply the validated
+# core-only library selection used by the successful GCD and PASS cloud flows.
+COPY patches/sky130/sky130-core-libraries.patch /tmp/sky130-core-libraries.patch
+RUN git apply --check /tmp/sky130-core-libraries.patch && \
+    git apply /tmp/sky130-core-libraries.patch && \
+    rm /tmp/sky130-core-libraries.patch
+
 # Make the SledgeHammer virtual environment available by default.
 ENV PATH="/opt/sledgehammer/.venv/bin:/root/.local/bin:${PATH}"
 

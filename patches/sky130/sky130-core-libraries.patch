@@ -1,0 +1,20 @@
+diff --git a/hammer/technology/sky130/__init__.py b/hammer/technology/sky130/__init__.py
+--- a/hammer/technology/sky130/__init__.py
++++ b/hammer/technology/sky130/__init__.py
+@@ -308,12 +308,11 @@
+         else:
+             raise ValueError(f"Incorrect standard cell library selection: {slib}")
+
+-        # add skywater io cells
++        # Cloud core-level Sky130 flows:
++        # Do not add the full sky130_fd_io Liberty collection to synthesis.
++        # Several IO .lib files are not accepted by Genus 25.1, and core-level
++        # designs without pad instances do not require IO timing libraries.
+         io_library_base_path = os.path.join(SKY130A, "libs.ref", "sky130_fd_io")
+-        if os.path.exists(io_library_base_path):
+-            lib_corner_files[io_library_base_path] = os.listdir(
+-                os.path.join(io_library_base_path, "lib")
+-            )
+
+
+         for library_base_path, cornerfiles in lib_corner_files.items():
